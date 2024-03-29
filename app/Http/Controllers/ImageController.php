@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use Intervention\Image\Laravel\Facades\Image as InterventionImage;
 
 class ImageController extends Controller
 {
@@ -44,6 +45,11 @@ class ImageController extends Controller
             $name = $this->generateUniqueFileName($image);
 
             $image->storeAs('public/images', $name);
+
+            $thumbnail = InterventionImage::read($image->getRealPath());
+            $thumbnail->scale(150, 150)
+                ->save(storage_path('app/public/images') . '/thumbnails/thumb_' . $name);
+
             Image::create([
                 'name' => $name,
             ]);
