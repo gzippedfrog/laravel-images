@@ -34,7 +34,8 @@ class ImageController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validatedData = $request->validate([
+            // TODO: change max value to 5
             'images' => 'required|array|max:2',
             'images.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
