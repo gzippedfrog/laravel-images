@@ -6,8 +6,10 @@ use App\Models\Image;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Laravel\Facades\Image as InterventionImage;
+use ZipArchive;
 
 class ImageController extends Controller
 {
@@ -44,7 +46,7 @@ class ImageController extends Controller
     {
         $validatedData = $request->validate([
             // TODO: change max value to 5
-            'images' => 'required|array|max:2',
+            'images'   => 'required|array|max:2',
             'images.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
@@ -55,9 +57,15 @@ class ImageController extends Controller
 
             $image->storeAs('public/images', $name);
 
+            $thumbnail_path = 'public/images/thumbnails';
+
+            if (!Storage::exists($thumbnail_path)) {
+                Storage::makeDirectory($thumbnail_path);
+            }
+
             $thumbnail = InterventionImage::read($image->getRealPath());
             $thumbnail->scale(150, 150)
-                ->save(storage_path('app/public/images') . '/thumbnails/thumb_' . $name);
+                ->save(storage_path('app/' . $thumbnail_path) . '/thumb_' . $name);
 
             Image::create([
                 'name' => $name,
@@ -99,8 +107,11 @@ class ImageController extends Controller
         //
     }
 
-    public function download()
+    public function download(Request $request)
     {
+        $validated = $request->all();
+        dd($validated);
+
         return response('download');
     }
 

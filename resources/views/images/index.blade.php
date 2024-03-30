@@ -5,6 +5,8 @@
         <div class="mb-3">Сначала загрузите изображения</div>
     @else
         <form class="mb-3" action="{{ route('images.index') }}" method="get">
+            @csrf
+
             <div class="input-group">
                 <select class="form-select" name="sort">
                     <option value="" disabled selected>Сортировка</option>
@@ -17,22 +19,42 @@
             </div>
         </form>
 
-        <div class="row row-cols">
-            @foreach ($images as $image)
-                <div class="col">
-                    <div class="card mb-3" style="width: 18rem;">
-                        <img class="card-img-top" src="{{ asset('storage/images/thumbnails/thumb_' . $image->name) }}"
-                             alt="{{ $image->name }}">
+        <form action="{{ route('images.download') }}" method="get">
+            <button class="btn btn-primary mb-3" type="submit">Скачать zip архив</button>
+            @csrf
 
-                        <div class="card-body">
-                            <a target="_blank" href="{{asset('storage/images/' . $image->name)}}">{{ $image->name }}</a>
-                        </div>
-                        <div class="card-footer">
-                            {{ $image->created_at->format('H:i:s d.m.Y') }}
+            <div class="row row-cols g-1">
+                @foreach ($images as $image)
+                    <div class="col">
+                        <div class="card mb-3" style="width: 18rem;">
+                            <img class="card-img-top"
+                                 src="{{ asset('storage/images/thumbnails/thumb_' . $image->name) }}"
+                                 alt="{{ $image->name }}">
+
+                            <div class="card-body">
+                                <div class="d-flex">
+                                    <a class="card-link" target="_blank"
+                                       href="{{asset('storage/images/' . $image->name)}}">
+                                        {{ $image->name }}
+                                    </a>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" name="images[]"
+                                               value="{{$image->id}}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="card-footer">
+                                <small class="text-body-secondary">
+                                    {{ $image->created_at->format('H:i:s d.m.Y') }}
+                                </small>
+                            </div>
                         </div>
                     </div>
-                </div>
-            @endforeach
+                @endforeach
+            </div>
+        </form>
         </div>
     @endif
 @endsection
