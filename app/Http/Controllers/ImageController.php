@@ -9,6 +9,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 use Intervention\Image\Laravel\Facades\Image as InterventionImage;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use ZipArchive;
@@ -18,7 +19,7 @@ class ImageController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         $images = match ($request->input('sort')) {
             'name_asc' => Image::orderBy('name', 'asc'),
@@ -36,7 +37,7 @@ class ImageController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): View
     {
         return view('images.create');
     }
@@ -44,9 +45,9 @@ class ImageController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
-        $validatedData = $request->validate([
+        $request->validate([
             'images' => 'required|array|max:5',
             'images.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
@@ -74,38 +75,6 @@ class ImageController extends Controller
         }
 
         return redirect(route('images.index'));
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Image $image)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Image $image)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Image $image)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Image $image)
-    {
-        //
     }
 
     public function download(Request $request): BinaryFileResponse|RedirectResponse

@@ -14,6 +14,10 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('images/download', [ImageController::class, 'download'])->name('images.download');
-Route::resource('images', ImageController::class);
+Route::get('images/download', [ImageController::class, 'download'])
+    ->name('images.download');
+
+Route::resource('images', ImageController::class)
+    ->only(['index', 'create', 'store']);
+
 Route::redirect('/', route('images.index'));
