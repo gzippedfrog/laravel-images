@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Image;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Laravel\Facades\Image as InterventionImage;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use ZipArchive;
 
 class ImageController extends Controller
@@ -45,8 +47,7 @@ class ImageController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            // TODO: change max value to 5
-            'images'   => 'required|array|max:2',
+            'images' => 'required|array|max:5',
             'images.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
@@ -65,7 +66,7 @@ class ImageController extends Controller
 
             $thumbnail = InterventionImage::read($image->getRealPath());
             $thumbnail->scale(150, 150)
-                ->save(storage_path('app/' . $thumbnail_path) . '/thumb_' . $name);
+                ->save(storage_path('app/' . $thumbnail_path . '/thumb_' . $name));
 
             Image::create([
                 'name' => $name,
@@ -107,12 +108,34 @@ class ImageController extends Controller
         //
     }
 
-    public function download(Request $request)
+    public function download(Request $request): BinaryFileResponse|RedirectResponse
     {
-        $validated = $request->all();
-        dd($validated);
+        $images_ids = $request->get('images', []);
 
-        return response('download');
+        if (0 === count($images_ids)) {
+            return redirect()
+                ->back()
+                ->withErrors('Выберите 1 или более изображения для архива');
+        }
+
+        $images = Image::whereIn('id', $images_ids)->get();
+
+        if (!$images->count()) {
+            abort(404);
+        }
+
+        $zip = new ZipArchive();
+        $zipName = storage_path('app/public/images-' . time() . '.zip');
+
+        if (true === $zip->open($zipName, ZipArchive::CREATE)) {
+            foreach ($images as $image) {
+                $zip->addFile(storage_path('app/public/images/' . $image->name), $image->name);
+            }
+
+            $zip->close();
+        }
+
+        return response()->download($zipName)->deleteFileAfterSend();
     }
 
     private function generateUniqueFileName(UploadedFile $image): string

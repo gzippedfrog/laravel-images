@@ -19,29 +19,36 @@
             </div>
         </form>
 
+        @if ($errors->any())
+            @foreach ($errors->all() as $error)
+                <div class="alert alert-danger" role="alert">{{ $error }}</div>
+            @endforeach
+        @endif
+
         <form action="{{ route('images.download') }}" method="get">
             <button class="btn btn-primary mb-3" type="submit">Скачать zip архив</button>
             @csrf
 
             <div class="row row-cols g-1">
                 @foreach ($images as $image)
-                    <div class="col">
+                    <div class="col-4">
                         <div class="card mb-3" style="width: 18rem;">
                             <img class="card-img-top"
                                  src="{{ asset('storage/images/thumbnails/thumb_' . $image->name) }}"
                                  alt="{{ $image->name }}">
 
                             <div class="card-body">
-                                <div class="d-flex">
+                                <p>
                                     <a class="card-link" target="_blank"
                                        href="{{asset('storage/images/' . $image->name)}}">
                                         {{ $image->name }}
                                     </a>
+                                </p>
 
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="images[]"
-                                               value="{{$image->id}}">
-                                    </div>
+                                <div class="form-check">
+                                    <label>Добавить в архив</label>
+                                    <input class="form-check-input" type="checkbox" name="images[]"
+                                           value="{{$image->id}}">
                                 </div>
                             </div>
 
