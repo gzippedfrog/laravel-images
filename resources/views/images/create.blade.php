@@ -10,10 +10,4 @@
             <button type="submit" class="btn btn-primary">Загрузить</button>
         </div>
     </form>
-
-    @if ($errors->any())
-        @foreach ($errors->all() as $error)
-            <div class="alert alert-danger" role="alert">{{ $error }}</div>
-        @endforeach
-    @endif
 @endsection

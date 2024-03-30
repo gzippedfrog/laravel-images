@@ -19,12 +19,6 @@
             </div>
         </form>
 
-        @if ($errors->any())
-            @foreach ($errors->all() as $error)
-                <div class="alert alert-danger" role="alert">{{ $error }}</div>
-            @endforeach
-        @endif
-
         <form action="{{ route('images.download') }}" method="get">
             <button class="btn btn-primary mb-3" type="submit">Скачать zip архив</button>
             @csrf
@@ -54,7 +48,7 @@
 
                             <div class="card-footer">
                                 <small class="text-body-secondary">
-                                    {{ $image->created_at->format('H:i:s d.m.Y') }}
+                                    {{ $image->uploaded_at->format('H:i:s d.m.Y') }}
                                 </small>
                             </div>
                         </div>

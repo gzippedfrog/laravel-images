@@ -9,6 +9,9 @@ class Image extends Model
 {
     use HasFactory;
 
+    const CREATED_AT = 'uploaded_at';
+    const UPDATED_AT = null;
+
     protected $fillable = [
         'name',
     ];

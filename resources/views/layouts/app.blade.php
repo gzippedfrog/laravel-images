@@ -14,6 +14,15 @@
 <body>
 
 <div class="container col-6 mt-5">
+    @if ($errors->any())
+        @foreach ($errors->all() as $error)
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ $error }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endforeach
+    @endif
+
     <nav class="mb-3 nav">
         <a class="nav-link {{ Route::current()->getName() == 'images.index' ? 'disabled' : '' }}"
            href="{{ route('images.index') }}">Главная</a>
