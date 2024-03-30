@@ -4,9 +4,10 @@
     <form action="{{ route('images.store') }}" method="post" enctype="multipart/form-data">
         @csrf
 
-        <div class="mb-3">
-            <label class="form-label" for="images">Выберите изображения:</label>
+        <label class="form-label mb-3" for="images">Выберите изображения (до 5 шт.)</label>
+        <div class="input-group">
             <input class="form-control" type="file" name="images[]" id="images" multiple accept="image/*" required>
+            <button type="submit" class="btn btn-primary">Загрузить</button>
         </div>
 
         @if ($errors->any())
@@ -15,6 +16,5 @@
             @endforeach
         @endif
 
-        <button type="submit" class="btn btn-primary">Загрузить</button>
     </form>
 @endsection

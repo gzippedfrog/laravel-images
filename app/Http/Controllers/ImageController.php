@@ -14,10 +14,18 @@ class ImageController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $images = match ($request->input('sort')) {
+            'name_asc' => Image::orderBy('name', 'asc'),
+            'name_desc' => Image::orderBy('name', 'desc'),
+            'date_asc' => Image::oldest(),
+            'date_desc' => Image::latest(),
+            default => Image::latest(),
+        };
+
         return view('images.index', [
-            'images' => Image::latest()->get(),
+            'images' => $images->get(),
         ]);
     }
 

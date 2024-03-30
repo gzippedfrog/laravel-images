@@ -13,11 +13,13 @@
 </head>
 <body>
 
-<div class="container col-3 mt-5">
-    <ul>
-        <li><a href="{{ route('images.index') }}">index</a></li>
-        <li><a href="{{ route('images.create') }}">create</a></li>
-    </ul>
+<div class="container col-6 mt-5">
+    <nav class="mb-3 nav">
+        <a class="nav-link {{ Route::current()->getName() == 'images.index' ? 'disabled' : '' }}"
+           href="{{ route('images.index') }}">Главная</a>
+        <a class="nav-link {{ Route::current()->getName() == 'images.create' ? 'disabled' : '' }}"
+           href="{{ route('images.create') }}">Загрузить</a>
+    </nav>
 
     @yield('content')
 </div>
