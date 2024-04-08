@@ -2,6 +2,7 @@
 
 use App\Http\Resources\ImageResource;
 use App\Models\Image;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,10 +21,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/images', function () {
-    return new ImageResource(Image::orderBy('id', 'desc')->get());
+Route::get('/images', function (): JsonResponse {
+    return new JsonResponse(Image::orderBy('id', 'desc')->get());
 });
 
-Route::get('/images/{id}', function (string $id) {
-    return new ImageResource(Image::findOrFail($id));
+Route::get('/images/{id}', function (string $id): JsonResponse {
+    return new JsonResponse(Image::findOrFail($id));
 });
